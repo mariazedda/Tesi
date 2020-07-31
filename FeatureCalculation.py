@@ -69,7 +69,7 @@ stringPath = "C:\\Users\\pc\\Desktop\\\data2"
 with open('features.csv', 'w', newline='') as f:
     wtr = csv.writer(f)
     wtr.writerow(clm)
-    for p in range(1, 2):
+    for p in range(5, 6):
         for a in range(1, 2):
             auxStrA = ""
             if a < 10:
@@ -85,8 +85,12 @@ with open('features.csv', 'w', newline='') as f:
                 stringPathFile = stringPath + "\\a" + auxStrA + "\\p" + str(p) + "\\s" + auxStr + ".txt"
 
                 # X = pd.read_csv(stringPathFile, sep="\t", header=None)
+                waste = 0
                 for X in pd.read_csv(stringPathFile, sep="\t", header=None, chunksize=60):
+                    if X[waste+1].size < 60:
+                        break
                     row = ["P" + str(p)]
+
                     for i in range(2, X.shape[1] - 3):
                         aux = []
                         # Valore massimo
@@ -110,18 +114,18 @@ with open('features.csv', 'w', newline='') as f:
                         # Autocorrelazione
                         acf = correlate(X[i], X[i], 'full')[-len(X[0]):]
                         aut = []
-                        # if j % int(X[i].size / 8) == 0:
+                        # if j % int(X[i].size / 8) == 0: int(X[i].size / 10)
                         for j in range(acf.size):
-                            if j % int(X[i].size / 10) == 0:
+                            if j % 8 == 0:
                                 aut.append(acf[j])
 
                         while (len(aut) < 10):
-                            aut.append(acf[X[i].size - (10 - len(aut))])
+                            aut.append(acf[(X[i].size) - (10 - len(aut))])
                         aux.extend(aut)
 
                         # Trasformata discreta di Fourier
                         fourier = (fft.rfft(X[i] - X[i].mean()))
-                        freq = fft.rfftfreq(X[i].size, d=1. / 25)
+                        freq = fft.rfftfreq(X[i].size, d=1. / 15)
                         inflection = diff(sign(diff(fourier)))
                         peaks = (inflection < 0).nonzero()[0] + 1
 
@@ -130,6 +134,7 @@ with open('features.csv', 'w', newline='') as f:
 
                         # Frequenza dei picchi della trasformata discreta di fourier
                         signal_freq = freq[peaks]
+
                         aux.extend(peak[:5])
                         aux.extend(signal_freq[:5])
                         row.extend(aux)
@@ -142,4 +147,7 @@ with open('features.csv', 'w', newline='') as f:
                             if position == "y":
                                 row.extend([max(X[i + 3])])  # Position
 
-                    wtr.writerow(row)
+                        waste = i
+
+                    if len(clm) == len(row):
+                        wtr.writerow(row)
