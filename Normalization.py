@@ -6,8 +6,6 @@ import math
 
 
 # Funzione per il calcolo del valore assoluto dei numeri complessi
-
-
 def absolute_value_complex_arr(parameter):
     auxC = []
     for j in parameter:
