@@ -17,7 +17,7 @@ sport = input("sport : c/f \n")
 # Load the Diabetes dataset
 
 if sport == "c":
-    stringPath = "\\TestAndTraining\\calcio"
+    stringPath = "TestAndTraining\\calcio"
     classi = ["1000 metri", "Navetta 10x5", "Scatto 30m", "Triplo salto in lungo"]
 
 else:

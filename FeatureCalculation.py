@@ -53,6 +53,7 @@ sport = input("sport : c/f \n")
 activity = input("attività : y/n \n")
 quality = input("score : y/n \n")
 position = input("sensor position : y/n \n")
+athleteID = input("athlete ID : y/n \n")
 
 if activity == "y":
     clm.append("Activity")
@@ -63,25 +64,31 @@ if quality == "y":
 if position == "y":
     clm.append("Sensor")
 
+if athleteID == "y":
+    clm.append("ID")
+
 # Calcolo delle feature e scrittura sul file
 if sport == "c":
-    stringPath = "\\data2\\calcio"
+    stringPath = "data2/calcio"
+    fileName = 'featuresCalcio'
 else:
-    stringPath = "\\data2\\futsal"
+    stringPath = "data2/futsal"
+    fileName = 'featuresFutsal'
 
-with open('features.csv', 'w', newline='') as f:
-    wtr = csv.writer(f)
-    wtr.writerow(clm)
-    for p in range(1, 6):
-        if p == 2:
-            for s in range(1, 12):
-                auxStr = ""
-                if s < 10:
-                    auxStr = "0"
+for p in range(1, 6):
+    with open(fileName + 'P' + str(p) + '.csv', 'w', newline='') as f:
+        wtr = csv.writer(f)
+        wtr.writerow(clm)
+        #if p == 1:
+        for s in range(1, 12):
+            auxStr = ""
+            if s < 10:
+                auxStr = "0"
                 auxStr += str(s)
-                stringPathFile = stringPath + "\\p" + str(p) + "\\s" + auxStr + ".txt"
+                stringPathFile = stringPath + "/p" + str(p) + "/s" + auxStr + ".txt"
 
                 waste = 0
+
                 for X in pd.read_csv(stringPathFile, sep="\t", header=None, chunksize=60):
                     if X[waste + 1].size < 60:
                         break
@@ -114,12 +121,13 @@ with open('features.csv', 'w', newline='') as f:
                             if j % 8 == 0:
                                 aut.append(acf[j])
 
-                        while (len(aut) < 10):
-                            aut.append(acf[(X[i].size) - (10 - len(aut))])
+                        while len(aut) < 10:
+                            tmp = acf[X[i].size - (10 - len(aut))]
+                            aut.append(tmp)
                         aux.extend(aut)
 
                         # Trasformata discreta di Fourier
-                        fourier = (fft.rfft(X[i] - X[i].mean()))
+                        fourier = fft.rfft(X[i] - X[i].mean())
                         freq = fft.rfftfreq(X[i].size, d=1. / 15)
                         inflection = diff(sign(diff(fourier)))
                         peaks = (inflection < 0).nonzero()[0] + 1
@@ -141,6 +149,8 @@ with open('features.csv', 'w', newline='') as f:
                                 row.extend([max(X[i + 2])])  # Score
                             if position == "y":
                                 row.extend([max(X[i + 3])])  # Position
+                            if athleteID == "y":
+                                row.extend(["p" + str(p) + ""])  # Athlete
 
                         waste = i
 
