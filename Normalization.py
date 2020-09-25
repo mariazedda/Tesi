@@ -25,7 +25,7 @@ def absolute_value_complex_arr(parameter):
     return np.asarray(result)
 
 
-data = pd.read_csv('TesterTrainingFile/futsal/P5/training.csv', sep=",", header=0, low_memory=False)
+data = pd.read_csv('featuresCalcio.csv', sep=";", header=0, low_memory=False)
 clm1 = data.columns.values
 
 cls = data.Score
@@ -70,7 +70,7 @@ for i in range(0, len(matrixFin)):
 
 
 # Creazione del dataset Normalizzato
-with open('TesterTrainingFile/futsal/P5/training.csv', 'w', newline='') as f:
+with open('featuresCalcio.csv', 'w', newline='') as f:
     wtr = csv.writer(f)
     wtr.writerow(clm1)
     for i in range(0, len(matrix2)):

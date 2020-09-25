@@ -75,11 +75,13 @@ else:
     stringPath = "data2/futsal"
     fileName = 'featuresFutsal'
 
-for p in range(1, 6):
-    with open(fileName + 'P' + str(p) + '.csv', 'w', newline='') as f:
-        wtr = csv.writer(f)
-        wtr.writerow(clm)
-        #if p == 1:
+
+    #with open(fileName + 'P' + str(p) + '.csv', 'w', newline='') as f:
+with open('featuresCalcio.csv', 'w', newline='') as f:
+    wtr = csv.writer(f)
+    wtr.writerow(clm)
+    #if p == 1:
+    for p in range(1, 6):
         for s in range(1, 12):
             auxStr = ""
             if s < 10:
